@@ -51,13 +51,18 @@ function fillSettingsForm() {
     document.getElementById("whitelist").value = bg.whitelist.join("\n");
     
     document.getElementById("behaviour-sync-ips").checked = bg.sync;
+
+    document.getElementById("behaviour-specificsites").checked = bg.permsites;
+    document.getElementById("permlist").value = bg.permlist.join("\n");
 }
 
 function submitSettings() {
     var bg = chrome.extension.getBackgroundPage();
     bg.headers = [];
     for (x in bg.possibleHeaders) {
+        console.log(bg.possibleHeaders);
         var h = bg.possibleHeaders[x];
+        
         if (document.getElementById("header-"+h).checked) {
             console.log(h+': ENABLED');
                         bg.headers.push(h);
@@ -87,13 +92,13 @@ function submitSettings() {
         bg.list.push(ip);
     }
     
-    if (document.getElementById("behaviour-sync-ips").checked) {
-        bg.sync = true;
-    } else {
-        bg.sync = false;
-    }
-    
+    bg.sync = document.getElementById("behaviour-sync-ips").checked;
+
+    bg.permsites = document.getElementById("behaviour-specificsites").checked;
+   
     bg.whitelist = document.getElementById("whitelist").value.trim().split("\n");
+
+    bg.permlist = document.getElementById("permlist").value.trim().split("\n");
     
     bg.saveSettings();
     bg.applySettings();
@@ -106,13 +111,28 @@ function checkFormEnabled() {
     var bg = chrome.extension.getBackgroundPage();
     var d = document.getElementById("enabled");
     var fieldsets = document.getElementsByTagName("fieldset");
+    
     for (f in fieldsets) {
         fieldsets[f].disabled = !d.checked;
     }
     bg.enabled = d.checked;
 }
 
+function checkPermSitesFormEnabled() {
+    var bg = chrome.extension.getBackgroundPage();
+    var d = document.getElementById("behaviour-specificsites");
+    var fieldsets = document.getElementsByTagName("fieldset");
+    for (f in fieldsets) {
+        if (fieldsets[f].id == "permlistset"){
+            fieldsets[f].disabled = !d.checked;
+        }
+    }
+    bg.permsites = d.checked;
+}
+
+
 document.getElementById("enabled").onclick = checkFormEnabled;
+document.getElementById("behaviour-specificsites").onclick = checkPermSitesFormEnabled;
 document.getElementById("form").onsubmit = submitSettings;
 document.getElementById("reset-config").onclick = function() {
     var bg = chrome.extension.getBackgroundPage();

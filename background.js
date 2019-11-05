@@ -9,6 +9,8 @@ var range_from = [0,0,0,0];
 var range_to = [255,255,255,255];
 var list = [[0,0,0,0], [1,1,1,1]];
 var whitelist = [];
+var permsites = false;
+var permlist = [];
 
 
 function generateIp() {
@@ -28,15 +30,7 @@ function generateIp() {
     }
 }
 
-function handleBeforeSendHeaders(data) {
-    if (!enabled) {
-        return {};
-    }
-    for (var r in whitelist) {
-        if (data.url.match(whitelist[r])) {
-            return;
-        }
-    }
+function fakeHeaders(data){
     var xdata=data.requestHeaders;
     var value = 0;
     for (var h in headers) {
@@ -49,6 +43,30 @@ function handleBeforeSendHeaders(data) {
         });
     }
     return {requestHeaders: xdata};
+}
+function handleBeforeSendHeaders(data) {
+    if (!enabled) {
+        return {};
+    }
+    for (var r in whitelist) {
+        if (data.url.match(whitelist[r])) {
+            return;
+        }
+    }
+
+    if (permsites) {
+        for (var r in permlist){
+            if (data.url.match(permlist[r])) {
+                return fakeHeaders(data);
+            }
+        }
+        return;
+    } else {
+        return fakeHeaders(data);
+    }
+
+    
+   
 }
 
 function registerListener() {
@@ -83,6 +101,8 @@ function loadDefaultSettings() {
     localStorage["range_to"] = "255.255.255.255";
     localStorage["list"] = "0.0.0.0;1.1.1.1";
     localStorage["whitelist"] = "http://ignore_this_domain.com/.*";
+    localStorage["permsites"] = false;
+    localStorage["permlist"] = "http://only_this_domain.com/.*";
     loadSettings();
 }
 
@@ -102,6 +122,11 @@ function loadSettings() {
             list.push(lslist[i].split("."));
         }
         whitelist = localStorage["whitelist"].split(";");
+
+        permsites = localStorage["permsites"];
+        permlist = localStorage["permlist"].split(";");
+
+        
     } catch(e) {
         // load defaults
         console.log("resettings config ("+e+")");
@@ -122,6 +147,10 @@ function saveSettings() {
         localStorage["list"] += list[i].join(".")+";";
     }
     localStorage["whitelist"] = whitelist.join(";");
+    localStorage["permsites"] = permsites;
+    localStorage["permlist"] = permlist.join(";");
+
+
 }
 
 function applySettings() {

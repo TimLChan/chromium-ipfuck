@@ -9,14 +9,25 @@
         <form id="form">
             <label><input type="checkbox" id="enabled" />
                     Enable IPFuck</label>
+            </p>
             <fieldset>
-                <legend>Headers to overwrite</legend>
+                <legend>Headers to Overwrite</legend>
                 <label><input type="checkbox" id="header-X-Forwarded-For" />
                     X-Forwarded-For</label><br />
                 <label><input type="checkbox" id="header-Client-Ip" />
                     Client-Ip</label><br />
                 <label><input type="checkbox" id="header-Via" />
-                    Via</label>
+                    Via</label><br />
+                <label><input type="checkbox" id="header-X-Real-IP" />
+                    X-Real-IP</label>
+            </fieldset></br>
+
+            <fieldset>
+                    <legend>Extra Configuration</legend>
+                <label><input type="checkbox" id="behaviour-sync-ips" />
+                        Synchronize IPs between headers?</label></br>
+                <label><input type="checkbox" id="behaviour-specificsites" />
+                    Only run on specific sites (Note: ignored sites takes priority)</label>
             </fieldset>
 
             <div class="b-tabs">
@@ -45,23 +56,24 @@
                     </div>
                 </div>
             </div>
-            <div style="clear: both;"></div>
-
-            <label><input type="checkbox" id="behaviour-sync-ips" />
-                Synchronize IP together?</label>
-
+            <div style="clear: both;"></div></br>
 
             <fieldset>
-                <legend>Sites to ignore (regexps, one URL per line)</legend>
-                <textarea id="whitelist" rows="5"></textarea>
-            </fieldset>
+                    <legend>Sites to ignore (regexps, one URL per line)</legend>
+                    <textarea id="whitelist" rows="5"></textarea>
+            </fieldset></p>
+
+            <fieldset id="permlistset">
+                <legend>Specific sites (regexps, one URL per line)</legend>
+                <textarea id="permlist" rows="5"></textarea>
+            </fieldset></br>
 
             <input type="submit" value="Save &amp; Apply" />
-            <p id="status"></p>
+            <p id="status">
         </form>
         <p style="text-align: right">
             Need more? Try <a target="_blank" href="https://vpn.ccrypto.org/">CCrypto VPN</a>!<br />
-            <a target="_blank" href="https://github.com/0xa/chromium-ipfuck/">IPFuck for Chromium</a> |
+            <a target="_blank" href="https://github.com/TimLChan/chromium-ipfuck">IPFuck for Chromium (TimLChan Fork)</a> |
             <a target="_blank" href="http://ipfuck.paulds.fr/">IPFuck</a> |
             <a id="reset-config" href="#">default settings</a></p>
         <script src="popup.js"></script>
